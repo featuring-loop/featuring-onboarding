@@ -13,6 +13,7 @@
 		"@featuring-corp/components": "*",
 		"@featuring-corp/design-tokens": "*",
 		"@featuring-corp/icons": "*",
+		"@tanstack/react-query": "^5.85.6",
 		"next": "14.2.7",
 		"next-swagger-doc": "^0.4.0",
 		"react": "^18",
