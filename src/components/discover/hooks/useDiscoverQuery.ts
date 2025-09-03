@@ -1,9 +1,9 @@
-import { useQuery, UseQueryOptions } from '@tanstack/react-query';
+import { useSuspenseQuery, UseSuspenseQueryOptions } from '@tanstack/react-query';
 import { QUERY_KEY } from '@/shared/constant/queryKey';
 import { DiscoverRequestDTO, DiscoverResponseData } from '@/components/discover/model/types';
 import { getDiscover } from '@/components/discover/api/getDiscover';
 
-export const discoverQueryOptions = (params?: DiscoverRequestDTO): UseQueryOptions<DiscoverResponseData> => {
+export const discoverQueryOptions = (params?: DiscoverRequestDTO): UseSuspenseQueryOptions<DiscoverResponseData> => {
 	return {
 		queryKey: [QUERY_KEY.DISCOVER, params],
 		queryFn: () => getDiscover(params),
@@ -11,5 +11,5 @@ export const discoverQueryOptions = (params?: DiscoverRequestDTO): UseQueryOptio
 };
 
 export function useDiscoverQuery(params?: DiscoverRequestDTO) {
-	return useQuery(discoverQueryOptions(params));
+	return useSuspenseQuery(discoverQueryOptions(params));
 }

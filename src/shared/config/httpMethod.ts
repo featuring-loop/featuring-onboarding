@@ -15,7 +15,7 @@ export const axiosInstance = axios.create({
 	baseURL: process.env.API_BASE_URL,
 });
 
-export async function httpMethod<Data>(url: string, method: HttpMethod, body?: object): Promise<Data | undefined> {
+export async function httpMethod<Data>(url: string, method: HttpMethod, body?: object): Promise<Data> {
 	try {
 		const response = await axiosInstance({
 			url,
@@ -26,8 +26,10 @@ export async function httpMethod<Data>(url: string, method: HttpMethod, body?: o
 		return response.data as Data;
 	} catch (error) {
 		if (axios.isAxiosError(error)) {
-			throw new Error(error.response?.statusText || 'Axios Request failed');
+			const errorMessage =
+				error.response?.data?.message || error.response?.statusText || error.message || '네트워크 요청에 실패했습니다';
+			throw new Error(errorMessage);
 		}
-		return undefined;
+		throw new Error('알 수 없는 오류가 발생했습니다');
 	}
 }

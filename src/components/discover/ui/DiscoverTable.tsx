@@ -16,14 +16,14 @@ export default function DiscoverTable() {
 	const currentPage = Number(router.query.page) || 1;
 	const currentPageSize = Number(router.query.page_size) || 25;
 
-	const { data, isLoading, isError, error } = useDiscoverQuery({
+	const { data } = useDiscoverQuery({
 		sort_by: currentSortBy,
 		order: currentOrder,
 		page: currentPage,
 		page_size: currentPageSize,
 	});
 
-	const tableData: Influencer[] = data && !isError ? (data as DiscoverResponse).data : [];
+	const tableData: Influencer[] = (data as DiscoverResponse).data;
 
 	const table = useReactTable<Influencer>({
 		data: tableData,
@@ -98,19 +98,6 @@ export default function DiscoverTable() {
 			{ shallow: true },
 		);
 	};
-
-	if (isLoading || !router.isReady) {
-		return <div>Loading...</div>;
-	}
-
-	if (isError) {
-		return (
-			<div>
-				<h3>오류가 발생했습니다</h3>
-				<p>{error?.message || '알 수 없는 오류가 발생했습니다.'}</p>
-			</div>
-		);
-	}
 
 	return (
 		<>
