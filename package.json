@@ -14,10 +14,12 @@
 		"@featuring-corp/design-tokens": "*",
 		"@featuring-corp/icons": "*",
 		"@tanstack/react-query": "^5.85.6",
+		"@tanstack/react-table": "^8.21.3",
 		"next": "14.2.7",
 		"next-swagger-doc": "^0.4.0",
 		"react": "^18",
 		"react-dom": "^18",
+		"react-error-boundary": "^6.0.0",
 		"swagger-ui-react": "^5.17.14"
 	},
 	"devDependencies": {
