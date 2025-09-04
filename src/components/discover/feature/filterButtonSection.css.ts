@@ -10,6 +10,9 @@ const filterButtonSection = style([
 		gap: 'spacing-200',
 	}),
 	{
+		position: 'sticky',
+		top: 57,
+		zIndex: 10,
 		display: 'flex',
 		alignItems: 'center',
 		borderBottomWidth: '1px',

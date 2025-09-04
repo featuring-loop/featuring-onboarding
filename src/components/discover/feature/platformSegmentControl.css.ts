@@ -10,6 +10,9 @@ const platformSegmentedSection = style([
 		gap: 'spacing-200',
 	}),
 	{
+		position: 'sticky',
+		top: 0,
+		zIndex: 10,
 		display: 'flex',
 		alignItems: 'center',
 		borderBottomWidth: '1px',

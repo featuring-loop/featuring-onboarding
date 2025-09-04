@@ -11,7 +11,7 @@ export const tableHeaderContainer = style([
 	{
 		overflowX: 'hidden',
 		position: 'sticky',
-		top: '0',
+		top: 114,
 		zIndex: 10,
 		borderBottom: `1px solid ${vars.semantic.color.border.default}`,
 	},
