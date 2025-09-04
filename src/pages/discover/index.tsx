@@ -5,7 +5,7 @@ import Header from '@/layout/header/Header';
 import FilterButtonSection from '@/components/discover/ui/FilterButtonSection';
 import PlatformSegmentedSection from '@/components/discover/ui/PlatformSegmentedSection';
 import ErrorFallback from '@/shared/ui/ErrorFallback';
-import SkeletonTable from '@/components/discover/ui/SkeletonTable';
+import SkeletonDiscoverTable from '@/components/discover/ui/SkeletonDiscoverTable';
 
 export default function DiscoverPage() {
 	const DiscoverTable = dynamic(() => import('@/components/discover/ui/DiscoverTable'), { ssr: false });
@@ -14,9 +14,8 @@ export default function DiscoverPage() {
 			<Header />
 			<PlatformSegmentedSection />
 			<FilterButtonSection />
-			<SkeletonTable />
 			<ErrorBoundary FallbackComponent={ErrorFallback}>
-				<Suspense fallback={<SkeletonTable />}>
+				<Suspense fallback={<SkeletonDiscoverTable />}>
 					<DiscoverTable />
 				</Suspense>
 			</ErrorBoundary>

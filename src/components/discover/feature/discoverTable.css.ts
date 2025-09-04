@@ -1,75 +1,64 @@
 import { style } from '@vanilla-extract/css';
 import { sprinkles } from '@/styles/sprinkles.css';
-import { vars } from '@/styles/theme.css';
 import { typoVariant } from '@/styles/typography.css';
+import { vars } from '@/styles/theme.css';
 
-export const tableContainer = style([
-	{
-		overflowX: 'auto',
-	},
-]);
-
-export const table = style([
-	{
-		tableLayout: 'fixed',
-		width: '100%',
-		borderCollapse: 'collapse',
-		borderSpacing: 0,
-	},
-]);
-
-export const headerCell = style([
+export const tableHeaderContainer = style([
 	sprinkles({
 		bgColor: 'background-1',
-		borderColor: 'border-2',
 	}),
+	typoVariant.heading[2],
 	{
-		textAlign: 'left',
+		overflowX: 'hidden',
 		position: 'sticky',
-		top: 0,
-		userSelect: 'none',
+		top: '0',
+		zIndex: 10,
+		borderBottom: `1px solid ${vars.semantic.color.border.default}`,
 	},
 ]);
 
-export const headerCellFixed = style([
+export const tableBodyContainer = style([
+	{
+		overflowX: 'scroll',
+	},
+]);
+
+export const dataCellLeftFixed = style([
 	sprinkles({
-		bgColor: 'background-1',
-		borderColor: 'border-2',
+		paddingLeft: 'spacing-1000',
 	}),
 	{
 		position: 'sticky',
 		left: 0,
-		zIndex: 10,
 	},
 ]);
 
-export const headerCellClickable = style({
+export const headerCellLeftFixed = style([
+	sprinkles({
+		paddingLeft: 'spacing-1000',
+		bgColor: 'background-1',
+	}),
+	{
+		position: 'sticky',
+		left: 0,
+		zIndex: 20,
+	},
+]);
+
+export const cellClickable = style({
 	cursor: 'pointer',
 });
 
-export const headerContent = style([
+export const tableHeaderCellWrapper = style([
 	sprinkles({
-		padding: 'spacing-300',
-		borderColor: 'border-default',
+		padding: 'spacing-200',
 	}),
 	{
-		borderRightWidth: '1px',
-		borderRightStyle: 'solid',
-		borderBottomWidth: '1px',
-		borderBottomStyle: 'solid',
+		borderRight: `1px solid ${vars.semantic.color.border.default}`,
 	},
 ]);
 
-export const headerContentFixed = style([
-	sprinkles({
-		borderColor: 'border-2',
-	}),
-	{
-		paddingLeft: vars.global.spacing[1000],
-	},
-]);
-
-export const headerIconContainer = style([
+export const tableHeaderCellBox = style([
 	sprinkles({
 		gap: 'spacing-100',
 	}),
@@ -79,55 +68,16 @@ export const headerIconContainer = style([
 	},
 ]);
 
-export const dataCellFixed = style([
+export const tableBodyCellWrapper = style([
 	sprinkles({
-		borderColor: 'border-2',
+		padding: 'spacing-200',
 	}),
 	{
-		position: 'sticky',
-		left: 0,
-		zIndex: 10,
-		borderLeftWidth: '1px',
-		borderLeftStyle: 'solid',
+		display: 'flex',
+		alignItems: 'center',
+		height: '100%',
+		borderRight: `1px solid ${vars.semantic.color.border.default}`,
 	},
 ]);
 
-export const dataCellRegular = style([
-	sprinkles({
-		borderColor: 'border-default',
-	}),
-	{
-		borderRightWidth: '1px',
-		borderRightStyle: 'solid',
-	},
-]);
-
-export const dataCellContent = style([
-	sprinkles({
-		padding: 'spacing-300',
-	}),
-]);
-
-export const dataCellContentFixed = style([
-	dataCellContent,
-	sprinkles({
-		borderColor: 'border-2',
-	}),
-	{
-		paddingLeft: vars.global.spacing[1000],
-		borderRightWidth: '1px',
-		borderRightStyle: 'solid',
-	},
-]);
-
-export const backgroundWhite = style([
-	sprinkles({
-		bgColor: 'background-1',
-	}),
-]);
-
-export const backgroundGray = style([
-	sprinkles({
-		bgColor: 'background-2',
-	}),
-]);
+export const tableBodyCellBox = style([typoVariant.body[2]]);

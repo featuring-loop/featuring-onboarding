@@ -7,9 +7,13 @@ import { IconArrowDownOutline, IconArrowUpOutline } from '@featuring-corp/icons'
 import * as styles from '@/components/discover/feature/discoverTable.css';
 import clsx from 'clsx';
 import { CorePagination, CoreSelect, CoreSelectItem } from '@featuring-corp/components';
+import { useRef, useEffect } from 'react';
+import { sprinkles } from '@/styles/sprinkles.css';
 
 export default function DiscoverTable() {
 	const router = useRouter();
+	const headerContainerRef = useRef<HTMLDivElement>(null);
+	const bodyContainerRef = useRef<HTMLDivElement>(null);
 
 	const currentSortBy = router.query.sort_by as SortBy | undefined;
 	const currentOrder = router.query.order as Order | undefined;
@@ -99,10 +103,27 @@ export default function DiscoverTable() {
 		);
 	};
 
+	useEffect(() => {
+		const bodyContainer = bodyContainerRef.current;
+		const headerContainer = headerContainerRef.current;
+
+		if (!bodyContainer || !headerContainer) return;
+
+		const handleScroll = () => {
+			headerContainer.scrollLeft = bodyContainer.scrollLeft;
+		};
+
+		bodyContainer.addEventListener('scroll', handleScroll);
+
+		return () => {
+			bodyContainer.removeEventListener('scroll', handleScroll);
+		};
+	}, []);
+
 	return (
 		<>
-			<div className={styles.tableContainer}>
-				<table className={styles.table}>
+			<div ref={headerContainerRef} className={styles.tableHeaderContainer}>
+				<table>
 					<thead>
 						{table.getHeaderGroups().map((headerGroup) => (
 							<tr key={headerGroup.id}>
@@ -115,22 +136,17 @@ export default function DiscoverTable() {
 											key={header.id}
 											onClick={() => isClickable && handleSort(sortableColumns[header.column.id])}
 											className={clsx({
-												[styles.headerCellFixed]: isFixed,
-												[styles.headerCellClickable]: isClickable,
+												[styles.headerCellLeftFixed]: isFixed,
+												[styles.cellClickable]: isClickable,
 											})}
 											style={{
-												width: `${header.getSize()}px`,
 												minWidth: `${header.getSize()}px`,
 												maxWidth: `${header.getSize()}px`,
 											}}
 										>
-											<div
-												className={clsx(styles.headerContent, {
-													[styles.headerContentFixed]: isFixed,
-												})}
-											>
+											<div className={clsx(styles.tableHeaderCellWrapper)}>
 												{header.isPlaceholder ? null : (
-													<div className={styles.headerIconContainer}>
+													<div className={styles.tableHeaderCellBox}>
 														{flexRender(header.column.columnDef.header, header.getContext())}
 														{getSortIcon(header.column.id)}
 													</div>
@@ -142,40 +158,46 @@ export default function DiscoverTable() {
 							</tr>
 						))}
 					</thead>
-					<tbody>
-						{table.getRowModel().rows.map((row, rowIndex) => (
-							<tr key={row.id}>
-								{row.getVisibleCells().map((cell, index) => {
-									const isFixed = index === 0;
-									const isEvenRow = rowIndex % 2 === 0;
+				</table>
+			</div>
 
-									return (
-										<td
-											key={cell.id}
-											className={clsx({
-												[styles.dataCellFixed]: isFixed,
-												[styles.dataCellRegular]: !isFixed,
-												[styles.backgroundWhite]: isEvenRow,
-												[styles.backgroundGray]: !isEvenRow,
-											})}
-											style={{
-												width: `${cell.column.getSize()}px`,
-												minWidth: `${cell.column.getSize()}px`,
-												maxWidth: `${cell.column.getSize()}px`,
-											}}
-										>
-											<div
-												className={clsx(styles.dataCellContent, {
-													[styles.dataCellContentFixed]: isFixed,
+			<div ref={bodyContainerRef} className={styles.tableBodyContainer}>
+				<table>
+					<tbody>
+						{table.getRowModel().rows.map((row, rowIndex) => {
+							const isEvenRow = rowIndex % 2 === 0;
+
+							return (
+								<tr key={row.id} className={clsx({ [sprinkles({ bgColor: 'background-2' })]: isEvenRow })}>
+									{row.getVisibleCells().map((cell, index) => {
+										const isFixed = index === 0;
+
+										return (
+											<td
+												key={cell.id}
+												className={clsx({
+													[styles.dataCellLeftFixed]: isFixed,
+													[sprinkles({ bgColor: 'background-2' })]: isFixed && isEvenRow,
+													[sprinkles({ bgColor: 'background-1' })]: isFixed && !isEvenRow,
 												})}
+												style={{
+													minWidth: `${cell.column.getSize()}px`,
+													maxWidth: `${cell.column.getSize()}px`,
+													height: '56px',
+													verticalAlign: 'middle',
+												}}
 											>
-												{flexRender(cell.column.columnDef.cell, cell.getContext())}
-											</div>
-										</td>
-									);
-								})}
-							</tr>
-						))}
+												<div className={clsx(styles.tableBodyCellWrapper)}>
+													<div className={clsx(styles.tableBodyCellBox)}>
+														{flexRender(cell.column.columnDef.cell, cell.getContext())}
+													</div>
+												</div>
+											</td>
+										);
+									})}
+								</tr>
+							);
+						})}
 					</tbody>
 				</table>
 			</div>
