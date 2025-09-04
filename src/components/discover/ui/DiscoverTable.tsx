@@ -1,5 +1,5 @@
 import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
-import { tableColumns } from '@/components/discover/model/tableColumns';
+import { TableColumns } from '@/components/discover/model/TableColumns';
 import { useDiscoverQuery } from '@/components/discover/hooks/useDiscoverQuery';
 import { Influencer, DiscoverResponse, SortBy, Order } from '@/components/discover/model/types';
 import { useRouter } from 'next/router';
@@ -31,7 +31,7 @@ export default function DiscoverTable() {
 
 	const table = useReactTable<Influencer>({
 		data: tableData,
-		columns: tableColumns,
+		columns: TableColumns,
 		getCoreRowModel: getCoreRowModel(),
 	});
 

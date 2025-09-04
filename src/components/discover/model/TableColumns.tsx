@@ -3,11 +3,14 @@ import { Influencer } from '@/components/discover/model/types';
 import React from 'react';
 import { typoVariant } from '@/styles/typography.css';
 import { vars } from '@/styles/theme.css';
-import { sprinkles } from '@/styles/sprinkles.css';
+import { addCommas, convertGenderToKorean } from '@/shared/lib/utils';
+import { CoreTooltip } from '@featuring-corp/components';
+import { IconHelpOutline } from '@featuring-corp/icons';
+import { DESCRIPTIONS } from '@/shared/constant/descriptions';
 
 const columnHelper = createColumnHelper<Influencer>();
 
-export const tableColumns = [
+export const TableColumns = [
 	columnHelper.accessor('username', {
 		header: '계정',
 		size: 330,
@@ -41,7 +44,7 @@ export const tableColumns = [
 		cell: (info) => {
 			const data = info.row.original;
 
-			return <>{data.follower}</>;
+			return <>{addCommas(data.follower)}</>;
 		},
 	}),
 	columnHelper.accessor('real_follower', {
@@ -50,7 +53,7 @@ export const tableColumns = [
 		cell: (info) => {
 			const data = info.row.original;
 
-			return <>{data.real_follower}</>;
+			return <>{addCommas(data.real_follower)}</>;
 		},
 	}),
 	columnHelper.accessor('avg_reach', {
@@ -59,16 +62,25 @@ export const tableColumns = [
 		cell: (info) => {
 			const data = info.row.original;
 
-			return <>{data.avg_reach}</>;
+			return <>{addCommas(data.avg_reach)}</>;
 		},
 	}),
 	columnHelper.accessor('avg_feed_like', {
 		header: '평균 피드 좋아요 수',
 		size: 220,
 		cell: (info) => {
-			const data = info.row.original;
+			const avg_feed_like = Math.floor(info.row.original.avg_feed_like);
 
-			return <>{data.avg_feed_like}</>;
+			return (
+				<div style={{ display: 'flex', gap: vars.global.spacing[150] }}>
+					{avg_feed_like}
+					{avg_feed_like === 0 && (
+						<CoreTooltip eventType="hover" text={DESCRIPTIONS.DISCOVER_ZERO_TOOLTIP} placement="top-end" zIndex={20}>
+							<IconHelpOutline fill={vars.semantic.color.icon.tertiary} />
+						</CoreTooltip>
+					)}
+				</div>
+			);
 		},
 	}),
 	columnHelper.accessor('main_audience_gender', {
@@ -77,7 +89,7 @@ export const tableColumns = [
 		cell: (info) => {
 			const data = info.row.original;
 
-			return <div>{data.main_audience_gender}</div>;
+			return <div>{convertGenderToKorean(data.main_audience_gender)}</div>;
 		},
 	}),
 	columnHelper.accessor('main_audience_age_range', {
