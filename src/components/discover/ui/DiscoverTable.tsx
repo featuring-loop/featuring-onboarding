@@ -1,24 +1,20 @@
-import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
-import { TableColumns } from '@/components/discover/model/TableColumns';
+import { flexRender } from '@tanstack/react-table';
+import clsx from 'clsx';
+import { CorePagination, CoreSelectPrim } from '@featuring-corp/components';
 import { useDiscoverQuery } from '@/components/discover/hooks/useDiscoverQuery';
-import { Influencer, DiscoverResponse, SortBy, Order } from '@/components/discover/model/types';
-import { useRouter } from 'next/router';
+import { useDiscoverTable } from '@/components/discover/hooks/useDiscoverTable';
+import { usePagination } from '@/components/discover/hooks/usePagination';
+import { useTableScroll } from '@/components/discover/hooks/useTableScroll';
+import { useSorting } from '@/components/discover/hooks/useSorting';
+import { Influencer, DiscoverResponse } from '@/components/discover/model/types';
 import { IconArrowDownOutline, IconArrowUpOutline } from '@featuring-corp/icons';
 import * as styles from '@/components/discover/feature/discoverTable.css';
-import clsx from 'clsx';
-import { CorePagination, CoreSelect, CoreSelectItem } from '@featuring-corp/components';
-import { useRef, useEffect } from 'react';
 import { sprinkles } from '@/styles/sprinkles.css';
 
 export default function DiscoverTable() {
-	const router = useRouter();
-	const headerContainerRef = useRef<HTMLDivElement>(null);
-	const bodyContainerRef = useRef<HTMLDivElement>(null);
-
-	const currentSortBy = router.query.sort_by as SortBy | undefined;
-	const currentOrder = router.query.order as Order | undefined;
-	const currentPage = Number(router.query.page) || 1;
-	const currentPageSize = Number(router.query.page_size) || 25;
+	const { currentPage, currentPageSize, handlePageChange, handlePageSizeChange } = usePagination();
+	const { currentSortBy, currentOrder, sortableColumns, handleSort, getSortIcon } = useSorting();
+	const { headerContainerRef, bodyContainerRef } = useTableScroll();
 
 	const { data } = useDiscoverQuery({
 		sort_by: currentSortBy,
@@ -28,97 +24,13 @@ export default function DiscoverTable() {
 	});
 
 	const tableData: Influencer[] = (data as DiscoverResponse).data;
+	const { table } = useDiscoverTable(tableData);
 
-	const table = useReactTable<Influencer>({
-		data: tableData,
-		columns: TableColumns,
-		getCoreRowModel: getCoreRowModel(),
-	});
-
-	const handleSort = (column: SortBy) => {
-		const newQuery: Record<string, any> = { ...router.query };
-
-		if (currentSortBy === column) {
-			if (currentOrder === 'desc') {
-				newQuery.order = 'asc';
-			}
-			if (currentOrder === 'asc') {
-				delete newQuery.sort_by;
-				delete newQuery.order;
-			}
-		} else {
-			newQuery.sort_by = column;
-			newQuery.order = 'desc';
-		}
-
-		router.push(
-			{
-				pathname: router.pathname,
-				query: newQuery,
-			},
-			undefined,
-			{ shallow: true },
-		);
+	const renderSortIcon = (columnId: string) => {
+		const iconType = getSortIcon(columnId);
+		if (!iconType) return null;
+		return iconType === 'down' ? <IconArrowDownOutline /> : <IconArrowUpOutline />;
 	};
-
-	const sortableColumns: Record<string, SortBy> = {
-		follower: 'follower',
-		real_follower: 'real_follower',
-		avg_reach: 'avg_reach',
-		avg_feed_like: 'avg_feed_like',
-	};
-
-	const getSortIcon = (columnId: string) => {
-		const sortBy = sortableColumns[columnId];
-		if (!sortBy || currentSortBy !== sortBy) return null;
-		return currentOrder === 'desc' ? <IconArrowDownOutline /> : <IconArrowUpOutline />;
-	};
-
-	const handlePageChange = (page: number) => {
-		const newQuery: Record<string, any> = { ...router.query, page: page.toString() };
-
-		router.push(
-			{
-				pathname: router.pathname,
-				query: newQuery,
-			},
-			undefined,
-			{ shallow: true },
-		);
-	};
-
-	const handlePageSizeChange = (pageSize: string) => {
-		const newQuery: Record<string, any> = { ...router.query, page_size: pageSize };
-		if (newQuery.page && Number(newQuery.page) > 1) {
-			newQuery.page = '1';
-		}
-
-		router.push(
-			{
-				pathname: router.pathname,
-				query: newQuery,
-			},
-			undefined,
-			{ shallow: true },
-		);
-	};
-
-	useEffect(() => {
-		const bodyContainer = bodyContainerRef.current;
-		const headerContainer = headerContainerRef.current;
-
-		if (!bodyContainer || !headerContainer) return;
-
-		const handleScroll = () => {
-			headerContainer.scrollLeft = bodyContainer.scrollLeft;
-		};
-
-		bodyContainer.addEventListener('scroll', handleScroll);
-
-		return () => {
-			bodyContainer.removeEventListener('scroll', handleScroll);
-		};
-	}, []);
 
 	return (
 		<>
@@ -148,7 +60,7 @@ export default function DiscoverTable() {
 												{header.isPlaceholder ? null : (
 													<div className={styles.tableHeaderCellBox}>
 														{flexRender(header.column.columnDef.header, header.getContext())}
-														{getSortIcon(header.column.id)}
+														{renderSortIcon(header.column.id)}
 													</div>
 												)}
 											</div>
@@ -202,19 +114,22 @@ export default function DiscoverTable() {
 				</table>
 			</div>
 			<div style={{ display: 'flex', justifyContent: 'space-between', padding: '32px' }}>
-				<CoreSelect
+				<CoreSelectPrim.Root
 					size="lg"
 					defaultValue={currentPageSize.toString()}
-					secondaryLabel="/ page"
 					width="140px"
-					optionPlacement="top"
-					setValue={handlePageSizeChange}
+					onValueChange={handlePageSizeChange}
 				>
-					<CoreSelectItem value="5">5명</CoreSelectItem>
-					<CoreSelectItem value="10">10명</CoreSelectItem>
-					<CoreSelectItem value="25">25명</CoreSelectItem>
-					<CoreSelectItem value="50">50명</CoreSelectItem>
-				</CoreSelect>
+					<CoreSelectPrim.Trigger>
+						<CoreSelectPrim.Value />
+					</CoreSelectPrim.Trigger>
+					<CoreSelectPrim.Content>
+						<CoreSelectPrim.Item value="5">5명</CoreSelectPrim.Item>
+						<CoreSelectPrim.Item value="10">10명</CoreSelectPrim.Item>
+						<CoreSelectPrim.Item value="25">25명</CoreSelectPrim.Item>
+						<CoreSelectPrim.Item value="50">50명</CoreSelectPrim.Item>
+					</CoreSelectPrim.Content>
+				</CoreSelectPrim.Root>
 				<CorePagination
 					totalPage={(data as DiscoverResponse).total}
 					activePage={(data as DiscoverResponse).page}
