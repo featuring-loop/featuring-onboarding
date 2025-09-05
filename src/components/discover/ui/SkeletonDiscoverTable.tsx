@@ -2,6 +2,9 @@ import * as styles from '@/components/discover/feature/discoverTable.css';
 import clsx from 'clsx';
 import Skeleton from '@/shared/ui/Skeleton/Skeleton';
 import { sprinkles } from '@/styles/sprinkles.css';
+import { flex } from '@/styles/recipe.css';
+import HeaderCellWrapper from './table/HeaderCellWrapper';
+import BodyCellWrapper from './table/BodyCellWrapper';
 
 const tableHeaders = [
 	{ name: '계정', size: 330 },
@@ -38,9 +41,7 @@ export default function SkeletonDiscoverTable({ rowCount = 5 }: SkeletonTablePro
 											maxWidth: `${header.size}px`,
 										}}
 									>
-										<div className={clsx(styles.tableHeaderCellWrapper)}>
-											<div className={styles.tableHeaderCellBox}>{header.name}</div>
-										</div>
+										<HeaderCellWrapper title={header.name} isFirstColumn={isFixed} />
 									</th>
 								);
 							})}
@@ -68,33 +69,28 @@ export default function SkeletonDiscoverTable({ rowCount = 5 }: SkeletonTablePro
 												key={`${header.name}-${rowIndex}`}
 												className={clsx({
 													[styles.dataCellLeftFixed]: isFixed,
-													[sprinkles({ bgColor: 'background-2' })]: isFixed && isEvenRow,
-													[sprinkles({ bgColor: 'background-1' })]: isFixed && !isEvenRow,
+													[sprinkles({ bgColor: 'background-2' })]: isEvenRow,
+													[sprinkles({ bgColor: 'background-1' })]: !isEvenRow,
 												})}
 												style={{
 													minWidth: `${header.size}px`,
 													maxWidth: `${header.size}px`,
-													height: '56px',
 													verticalAlign: 'middle',
 												}}
 											>
-												<div className={clsx(styles.tableBodyCellWrapper)}>
-													<div className={clsx(styles.tableBodyCellBox)} style={{ width: '100%' }}>
-														{cellIndex === 0 ? (
-															<div style={{ display: 'flex', alignItems: 'center', gap: '12px', width: '100%' }}>
-																<Skeleton
-																	style={{ width: '32px', height: '32px', flexShrink: 0, borderRadius: '50%' }}
-																/>
-																<div style={{ width: '100%' }}>
-																	<Skeleton style={{ marginBottom: '12px' }} />
-																	<Skeleton style={{ width: '80px' }} />
-																</div>
+												<BodyCellWrapper isFirstColumn={isFixed}>
+													{cellIndex === 0 ? (
+														<div style={{ display: 'flex', alignItems: 'center', gap: '12px', width: '100%' }}>
+															<Skeleton style={{ width: '32px', height: '32px', flexShrink: 0, borderRadius: '50%' }} />
+															<div style={{ width: '100%' }}>
+																<Skeleton style={{ marginBottom: '12px' }} />
+																<Skeleton style={{ width: '80px' }} />
 															</div>
-														) : (
-															<Skeleton />
-														)}
-													</div>
-												</div>
+														</div>
+													) : (
+														<Skeleton style={{ width: '100px' }} />
+													)}
+												</BodyCellWrapper>
 											</td>
 										);
 									})}
@@ -104,7 +100,7 @@ export default function SkeletonDiscoverTable({ rowCount = 5 }: SkeletonTablePro
 					</tbody>
 				</table>
 			</div>
-			<div style={{ display: 'flex', justifyContent: 'space-between', padding: '32px' }}>
+			<div className={clsx(sprinkles({ padding: 'spacing-800' }), flex({ justify: 'between' }))}>
 				<Skeleton style={{ width: '20%' }} />
 				<Skeleton style={{ width: '40%' }} />
 			</div>

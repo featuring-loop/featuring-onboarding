@@ -9,7 +9,7 @@ import SkeletonDiscoverTable from '@/components/discover/ui/SkeletonDiscoverTabl
 import DiscoverResultSection from '@/components/discover/ui/DiscoverResultSection';
 
 export default function DiscoverPage() {
-	const DiscoverTable = dynamic(() => import('@/components/discover/ui/DiscoverTable'), { ssr: false });
+	const DiscoverTable = dynamic(() => import('@/components/discover/ui/table/DiscoverTable'), { ssr: false });
 	return (
 		<>
 			<Header />

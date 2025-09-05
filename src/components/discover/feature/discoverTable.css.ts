@@ -45,39 +45,10 @@ export const headerCellLeftFixed = style([
 	},
 ]);
 
-export const cellClickable = style({
-	cursor: 'pointer',
+export const columnSeparateBorder = style({
+	borderRight: `1px solid ${vars.semantic.color.border[2]}`,
 });
 
-export const tableHeaderCellWrapper = style([
-	sprinkles({
-		padding: 'spacing-200',
-	}),
-	{
-		borderRight: `1px solid ${vars.semantic.color.border.default}`,
-	},
-]);
-
-export const tableHeaderCellBox = style([
-	sprinkles({
-		gap: 'spacing-100',
-	}),
-	{
-		display: 'flex',
-		alignItems: 'center',
-	},
-]);
-
-export const tableBodyCellWrapper = style([
-	sprinkles({
-		padding: 'spacing-200',
-	}),
-	{
-		display: 'flex',
-		alignItems: 'center',
-		height: '100%',
-		borderRight: `1px solid ${vars.semantic.color.border.default}`,
-	},
-]);
-
-export const tableBodyCellBox = style([typoVariant.body[2]]);
+export const regularColumnBorder = style({
+	borderRight: `1px solid ${vars.semantic.color.border.default}`,
+});

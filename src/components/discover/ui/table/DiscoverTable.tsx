@@ -6,14 +6,14 @@ import { useDiscoverTable } from '@/components/discover/hooks/useDiscoverTable';
 import { usePagination } from '@/components/discover/hooks/usePagination';
 import { useTableScroll } from '@/components/discover/hooks/useTableScroll';
 import { useSorting } from '@/components/discover/hooks/useSorting';
-import { Influencer, DiscoverResponse } from '@/components/discover/model/types';
-import { IconArrowDownOutline, IconArrowUpOutline } from '@featuring-corp/icons';
+import { Influencer, DiscoverResponse, SortBy } from '@/components/discover/model/types';
 import * as styles from '@/components/discover/feature/discoverTable.css';
 import { sprinkles } from '@/styles/sprinkles.css';
+import { flex } from '@/styles/recipe.css';
 
 export default function DiscoverTable() {
 	const { currentPage, currentPageSize, handlePageChange, handlePageSizeChange } = usePagination();
-	const { currentSortBy, currentOrder, sortableColumns, handleSort, getSortIcon } = useSorting();
+	const { currentSortBy, currentOrder, handleSort } = useSorting();
 	const { headerContainerRef, bodyContainerRef } = useTableScroll();
 
 	const { data } = useDiscoverQuery({
@@ -24,13 +24,12 @@ export default function DiscoverTable() {
 	});
 
 	const tableData: Influencer[] = (data as DiscoverResponse).data;
-	const { table } = useDiscoverTable(tableData);
-
-	const renderSortIcon = (columnId: string) => {
-		const iconType = getSortIcon(columnId);
-		if (!iconType) return null;
-		return iconType === 'down' ? <IconArrowDownOutline /> : <IconArrowUpOutline />;
-	};
+	const { table } = useDiscoverTable({
+		tableData,
+		currentSortBy,
+		currentOrder,
+		onSort: (sortBy: string) => handleSort(sortBy as SortBy),
+	});
 
 	return (
 		<>
@@ -40,30 +39,20 @@ export default function DiscoverTable() {
 						{table.getHeaderGroups().map((headerGroup) => (
 							<tr key={headerGroup.id}>
 								{headerGroup.headers.map((header, index) => {
-									const isClickable = sortableColumns[header.column.id];
 									const isFixed = index === 0;
 
 									return (
 										<th
 											key={header.id}
-											onClick={() => isClickable && handleSort(sortableColumns[header.column.id])}
 											className={clsx({
 												[styles.headerCellLeftFixed]: isFixed,
-												[styles.cellClickable]: isClickable,
 											})}
 											style={{
 												minWidth: `${header.getSize()}px`,
 												maxWidth: `${header.getSize()}px`,
 											}}
 										>
-											<div className={clsx(styles.tableHeaderCellWrapper)}>
-												{header.isPlaceholder ? null : (
-													<div className={styles.tableHeaderCellBox}>
-														{flexRender(header.column.columnDef.header, header.getContext())}
-														{renderSortIcon(header.column.id)}
-													</div>
-												)}
-											</div>
+											{header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
 										</th>
 									);
 								})}
@@ -80,7 +69,7 @@ export default function DiscoverTable() {
 							const isEvenRow = rowIndex % 2 === 0;
 
 							return (
-								<tr key={row.id} className={clsx({ [sprinkles({ bgColor: 'background-2' })]: isEvenRow })}>
+								<tr key={row.id}>
 									{row.getVisibleCells().map((cell, index) => {
 										const isFixed = index === 0;
 
@@ -89,21 +78,16 @@ export default function DiscoverTable() {
 												key={cell.id}
 												className={clsx({
 													[styles.dataCellLeftFixed]: isFixed,
-													[sprinkles({ bgColor: 'background-2' })]: isFixed && isEvenRow,
-													[sprinkles({ bgColor: 'background-1' })]: isFixed && !isEvenRow,
+													[sprinkles({ bgColor: 'background-2' })]: isEvenRow,
+													[sprinkles({ bgColor: 'background-1' })]: !isEvenRow,
 												})}
 												style={{
 													minWidth: `${cell.column.getSize()}px`,
 													maxWidth: `${cell.column.getSize()}px`,
-													height: '56px',
 													verticalAlign: 'middle',
 												}}
 											>
-												<div className={clsx(styles.tableBodyCellWrapper)}>
-													<div className={clsx(styles.tableBodyCellBox)}>
-														{flexRender(cell.column.columnDef.cell, cell.getContext())}
-													</div>
-												</div>
+												{flexRender(cell.column.columnDef.cell, cell.getContext())}
 											</td>
 										);
 									})}
@@ -113,7 +97,8 @@ export default function DiscoverTable() {
 					</tbody>
 				</table>
 			</div>
-			<div style={{ display: 'flex', justifyContent: 'space-between', padding: '32px' }}>
+
+			<div className={clsx(sprinkles({ padding: 'spacing-800' }), flex({ justify: 'between' }))}>
 				<CoreSelectPrim.Root
 					size="lg"
 					defaultValue={currentPageSize.toString()}
